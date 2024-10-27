@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина на Знайко</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+        #hero {
+            width: 100px; /* Заменете с реален размер на изображението на Знайко */
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .question {
+            margin-top: 60px;
+            font-size: 24px;
+        }
+        .answer {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .answer.correct {
+            background-color: #a8e6cf;
+        }
+        .answer.wrong {
+            background-color: #ff8b8b;
+        }
+        #score {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        #finalMessage {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #emoji {
+            font-size: 50px;
+            margin-top: 20px;
+        }
+        #nextButton {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <img id="hero" src="https://via.placeholder.com/100" alt="Знайко"> <!-- Заменете с истинското изображение на Знайко -->
+    <div id="score">Точки: 0</div>
+    <div id="questionContainer"></div>
+    <button id="nextButton" onclick="nextQuestion()">Следващ въпрос</button>
+    <div id="finalMessage"></div>
+    <div id="emoji"></div>
+
+    <script>
+        const questions = [
+            { question: "Какво е водата?", answers: ["Течно вещество", "Твърдо вещество", "Газообразно вещество"], correct: 0 },
+            { question: "Какво е въздухът?", answers: ["Течно вещество", "Газообразно вещество", "Твърдо вещество"], correct: 1 },
+            { question: "Какво е пясъкът?", answers: ["Течно вещество", "Твърдо вещество", "Газообразно вещество"], correct: 1 },
+            { question: "Какъв вид е желязото?", answers: ["Газообразно вещество", "Твърдо вещество", "Течно вещество"], correct: 1 },
+            { question: "Вода в твърдо състояние е:", answers: ["Сняг и лед", "Дъжд", "Пара"], correct: 0 },
+            { question: "Какво се получава при топене на лед?", answers: ["Вода", "Пара", "Въздух"], correct: 0 },
+            { question: "Какво става, когато водата заври?", answers: ["Става лед", "Става пара", "Превръща се в пясък"], correct: 1 },
+            { question: "Кой от тези примери е течност?", answers: ["Лед", "Масло", "Дърво"], correct: 1 },
+            { question: "Какъв е димът от горяща свещ?", answers: ["Газообразно вещество", "Течно вещество", "Твърдо вещество"], correct: 0 },
+            { question: "Какво е пластелинът?", answers: ["Газообразно вещество", "Течно вещество", "Твърдо вещество"], correct: 2 },
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function displayQuestion() {
+            const questionContainer = document.getElementById("questionContainer");
+            questionContainer.innerHTML = "";
+            const currentQuestion = questions[currentQuestionIndex];
+
+            const questionElement = document.createElement("div");
+            questionElement.className = "question";
+            questionElement.innerText = currentQuestion.question;
+            questionContainer.appendChild(questionElement);
+
+            currentQuestion.answers.forEach((answer, index) => {
+                const answerElement = document.createElement("div");
+                answerElement.className = "answer";
+                answerElement.innerText = answer;
+                answerElement.onclick = () => selectAnswer(index, answerElement);
+                questionContainer.appendChild(answerElement);
+            });
+        }
+
+        function selectAnswer(index, answerElement) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = index === currentQuestion.correct;
+
+            if (isCorrect) {
+                answerElement.classList.add("correct");
+                score++;
+            } else {
+                answerElement.classList.add("wrong");
+            }
+
+            document.getElementById("score").innerText = "Точки: " + score;
+
+            const nextButton = document.getElementById("nextButton");
+            nextButton.style.display = "block";
+
+            // Disable all answers
+            const answers = document.querySelectorAll(".answer");
+            answers.forEach(answer => {
+                answer.onclick = null;
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion();
+                document.getElementById("nextButton").style.display = "none";
+            } else {
+                showFinalMessage();
+            }
+        }
+
+        function showFinalMessage() {
+            const finalMessage = document.getElementById("finalMessage");
+            finalMessage.style.display = "block";
+            let message = "Вие събрахте общо " + score + " точки.";
+            let emoji = "";
+
+            if (score >= 9) {
+                message += " Справихте се отлично!";
+                emoji = "😄"; // щастлив емотикон
+            } else if (score >= 7) {
+                message += " Справихте се много добре!";
+                emoji = "😊"; // щастлив емотикон
+            } else if (score >= 5) {
+                message += " Справихте се добре!";
+                emoji = "🙂"; // щастлив емотикон
+            } else {
+                message += " Прочети още по темата и играй отново!";
+                emoji = "😢"; // тъжен емотикон
+            }
+
+            finalMessage.innerText = message;
+            document.getElementById("emoji").innerText = emoji;
+        }
+
+        // Започваме играта
+        displayQuestion();
+    </script>
+</body>
+</html>
